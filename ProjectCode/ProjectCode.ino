@@ -9,7 +9,7 @@
 #define BTN_PIN  PB4
 #define OLED_ADDR 0x3C
 
-#define TIME_HUNGRY      ((uint16_t)7200)
+#define TIME_HUNGRY      ((uint16_t)3600)
 #define TIME_GROW        ((uint16_t)54000)
 #define SCREEN_ON_SECS   ((uint8_t)10)
 
