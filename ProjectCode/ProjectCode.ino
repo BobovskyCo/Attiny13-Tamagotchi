@@ -22,7 +22,7 @@ uint16_t grow_tick;
 volatile uint8_t wdt_fired = 0;
 volatile uint8_t btn_fired = 0;
 
-// Спрайты предтранспонированы для SSD1306
+// Спрайты аобитово
 const uint8_t SPR_COFFIN[8]       PROGMEM = {0b10000000, 0b11111100, 0b10000010, 0b10001010, 0b10001010, 0b10000010, 0b11111100, 0b10000000};
 const uint8_t SPR_CHILD_IDLE[8]   PROGMEM = {0b00111100, 0b01000010, 0b10000101, 0b10010001, 0b10010001, 0b10000101, 0b01000010, 0b00111100};
 const uint8_t SPR_CHILD_BREATH[8] PROGMEM = {0b00111000, 0b01000100, 0b10001010, 0b10100010, 0b10100010, 0b10001010, 0b01000100, 0b00111000};
@@ -98,12 +98,12 @@ void draw_sprite(const uint8_t* spr) {
   }
 }
 
-// просто читаем состояние прямо сейчас, без ожидания
+// читаем состояние
 uint8_t read_button() {
-  if (PINB & (1 << BTN_PIN)) return 0;  // не нажата
+  if (PINB & (1 << BTN_PIN)) return 0;
   _delay_ms(10);                         // дебаунс
   if (PINB & (1 << BTN_PIN)) return 0;
-  return 1;                              // нажата
+  return 1;                              
 }
 
 void pet_update() {
@@ -164,12 +164,10 @@ void screen_awake() {
     for (uint8_t d = 0; d < 50; d++) {
       _delay_ms(10);
       if (!(PINB & (1 << BTN_PIN))) {
-        if (!(PINB & (1 << BTN_PIN))) {
-          // ждём отпускания
-          while (!(PINB & (1 << BTN_PIN)));
-          if (pet_age < 2) { pet_feed(); eating = 6; frame = 0; }
-          ticks_on = 0;
-        }
+        // ждём отпускания
+        while (!(PINB & (1 << BTN_PIN)));
+        if (pet_age < 2) { pet_feed(); eating = 6; frame = 0; }
+        ticks_on = 0;
       }
     }
 
@@ -198,11 +196,11 @@ void loop() {
   if (wdt_fired) { ticks++; wdt_fired = 0; pet_update(); }
   if (btn_fired) {
     btn_fired = 0;
-    _delay_ms(20);
+    _delay_ms(50);
     if (!(PINB & (1 << BTN_PIN))) {
-      oled_init();
       // ждём отпускания кнопки перед показом экрана
       while (!(PINB & (1 << BTN_PIN)));
+      oled_init();
       screen_awake();
       oled_off();
     }
